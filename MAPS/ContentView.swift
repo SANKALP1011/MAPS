@@ -17,18 +17,14 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             VStack{
-                GeometryReader{ proxy in
-                    Map(coordinateRegion: $region, interactionModes: .all, showsUserLocation: true, userTrackingMode: $tracking) //annotationItems: managerDelegate.pins)
-
-                        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .center)
+                
+                    Map(coordinateRegion: $region, interactionModes: .all, showsUserLocation: true, userTrackingMode: $tracking, annotationItems: managerDelegate.pins) { Pin in
+                        MapPin(coordinate: Pin.location.coordinate, tint: .blue)
                     }
-                
-                
-            }
+                    }
             .navigationBarTitle("MAPS")
             .onAppear(){
                 manager.delegate = managerDelegate
-                
             }
         }
             
