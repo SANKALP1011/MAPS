@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 import MapKit
 struct ContentView: View {
-
+var vvv = "y"
     @State var manager = CLLocationManager()
     @State var alert = false
     
