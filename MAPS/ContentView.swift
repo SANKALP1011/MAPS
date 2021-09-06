@@ -37,40 +37,41 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-struct MapView: UIViewRepresentable{
+struct MapView: UIViewRepresentable {
     
     @Binding var manager: CLLocationManager
     @Binding var alert: Bool
     let map = MKMapView()
     
     func makeCoordinator() -> MapView.Coordinator {
-        return Coordinator()
+        return Coordinator(parent1: self)
     }
     
     func makeUIView(context: UIViewRepresentableContext<MapView>) -> MKMapView {
         
-        let centre = CLLocationCoordinate2DMake(13.04, 80.2)
+        let centre = CLLocationCoordinate2DMake(26.8467, 80.9462)
         let region = MKCoordinateRegion(center: centre, latitudinalMeters: 1000, longitudinalMeters: 1000)
         map.region = region
         manager.requestWhenInUseAuthorization()
+        manager.delegate = context.coordinator
         manager.startUpdatingLocation()
         return map
     }
     func updateUIView(_ uiView: MKMapView, context: UIViewRepresentableContext<MapView>) {
-        
+        manager.startUpdatingLocation()
     }
     
-    class MapCoordinate: NSObject , CLLocationManagerDelegate{
+    class Coordinator: NSObject , CLLocationManagerDelegate{
         
-        var newParent : MapView
-            init(parent: MapView){
-            newParent = parent
+        var Parent : MapView
+            init(parent1: MapView){
+            Parent = parent1
             }
         
         func locationManager(_ manager: CLLocationManager , didChangeAuthorization status: CLAuthorizationStatus){
         
             if status == .denied{
-                newParent.alert.toggle()
+                Parent.alert.toggle()
             }
         }
         func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -86,11 +87,11 @@ struct MapView: UIViewRepresentable{
                 mapPin.title = place
                 mapPin.subtitle = "Current Location"
                 mapPin.coordinate = realLocation.coordinate
-                newParent.map.removeAnnotation(newParent.map.annotations as! MKAnnotation)
-                newParent.map.addAnnotation(mapPin)
+                Parent.map.removeAnnotations(Parent.map.annotations)
+                Parent.map.addAnnotation(mapPin)
                 
                 let region = MKCoordinateRegion(center: realLocation.coordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
-                newParent.map.region = region
+                Parent.map.region = region
                 
             }
             
